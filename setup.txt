@@ -1,0 +1,141 @@
+ALERTING & NOTIFICATION PLATFORM - SETUP GUIDE
+=====================================================
+
+This guide will help you set up and run the Alerting & Notification Platform on your computer, 
+even if you've never coded before.
+
+WHAT IS THIS PROJECT?
+--------------------
+This is a professional notification system that allows:
+- Admins to create and manage alerts for their organization
+- Users to receive notifications and manage their alert preferences
+- Real-time analytics and reporting
+- Extensible architecture for future enhancements
+
+PREREQUISITES (Software you need to install)
+===========================================
+
+1. INSTALL NODE.JS
+   - Go to https://nodejs.org/
+   - Download the "LTS" version (Long Term Support)
+   - Run the installer and follow the instructions
+   - This installs Node.js (JavaScript runtime) and npm (package manager)
+
+2. INSTALL A CODE EDITOR (Optional but recommended)
+   - Download Visual Studio Code: https://code.visualstudio.com/
+   - This helps you view and edit code files
+
+SETUP INSTRUCTIONS
+==================
+
+STEP 1: Download the Project
+---------------------------
+- The project files should already be in a folder on your computer
+- Open a terminal/command prompt:
+  * Windows: Press Windows key + R, type "cmd", press Enter
+  * Mac: Press Cmd + Space, type "terminal", press Enter
+  * Linux: Press Ctrl + Alt + T
+
+STEP 2: Navigate to Project Folder
+----------------------------------
+- In the terminal, type: cd path/to/your/project/folder
+- Replace "path/to/your/project/folder" with the actual path
+- Press Enter
+
+STEP 3: Install Dependencies
+---------------------------
+- Type: npm install
+- Press Enter
+- Wait for installation to complete (this downloads required libraries)
+
+STEP 4: Set Up Environment Variables
+-----------------------------------
+- A file called .env has been created with default settings
+- You can use these default values for testing
+- For production, you would change these to real values
+
+STEP 5: Set Up the Database
+--------------------------
+- Type: npm run setup:db
+- Press Enter
+- This creates the database and sample data for testing
+
+STEP 6: Start the Application
+----------------------------
+- Type: npm run dev
+- Press Enter
+- You should see: "Server running on http://localhost:3000"
+
+STEP 7: Test the Application
+---------------------------
+- Open your web browser
+- Go to: http://localhost:3000
+- You should see the notification platform interface
+
+TESTING THE SYSTEM
+==================
+
+Default Test Accounts:
+- Admin User: admin@company.com (password: admin123)
+- Regular User: john@company.com (password: user123)
+- Regular User: jane@company.com (password: user123)
+
+Test API Endpoints:
+- Dashboard: http://localhost:3000
+- API Documentation: http://localhost:3000/api/docs
+- Health Check: http://localhost:3000/api/health
+
+TROUBLESHOOTING
+===============
+
+Problem: "npm: command not found"
+Solution: Node.js is not installed. Go back to Step 1.
+
+Problem: "Permission denied"
+Solution: 
+- Windows: Run command prompt as Administrator
+- Mac/Linux: Add "sudo " before the command
+
+Problem: "Port 3000 already in use"
+Solution: 
+- Close any other applications using port 3000
+- Or change the port in .env file
+
+Problem: Database connection errors
+Solution: 
+- Make sure you ran "npm run setup:db"
+- Check if any antivirus is blocking the application
+
+STOPPING THE APPLICATION
+========================
+- In the terminal where the app is running
+- Press Ctrl + C (Windows/Linux) or Cmd + C (Mac)
+- Type "Y" if asked to terminate
+
+UNDERSTANDING THE PROJECT STRUCTURE
+===================================
+
+src/
+├── controllers/     # Handle API requests
+├── models/         # Database models and business logic  
+├── services/       # Core business services
+├── routes/         # API endpoint definitions
+├── middleware/     # Request processing middleware
+├── database/       # Database setup and migrations
+├── types/          # TypeScript type definitions
+└── utils/          # Utility functions
+
+public/             # Frontend files (HTML, CSS, JS)
+docs/              # Documentation
+tests/             # Test files
+
+WHAT'S NEXT?
+============
+1. Explore the web interface at http://localhost:3000
+2. Try creating alerts as an admin user
+3. Log in as a regular user to see notifications
+4. Check out the analytics dashboard
+5. Read the README.md file for more technical details
+
+For technical questions or issues, refer to the README.md file
+or check the API documentation at http://localhost:3000/api/docs

@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerting & Notification Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .login-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-left: 10px;
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .main-content {
+            display: none;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .nav-tab {
+            padding: 16px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            background: white;
+            border-bottom: 3px solid #667eea;
+            color: #667eea;
+        }
+
+        .tab-content {
+            padding: 30px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .alerts-grid {
+            display: grid;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .alert-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .alert-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .alert-card.warning {
+            border-left-color: #ffc107;
+        }
+
+        .alert-card.critical {
+            border-left-color: #dc3545;
+        }
+
+        .alert-card.info {
+            border-left-color: #17a2b8;
+        }
+
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .alert-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .alert-meta {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .alert-message {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .alert-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .severity-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .severity-info { background: #17a2b8; color: white; }
+        .severity-warning { background: #ffc107; color: #212529; }
+        .severity-critical { background: #dc3545; color: white; }
+
+        .user-info {
+            background: rgba(255,255,255,0.1);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .login-section {
+                padding: 30px 20px;
+            }
+            
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .nav-tab {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            
+            .alert-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔔 Alerting & Notification Platform</h1>
+            <p>Professional enterprise-grade notification management system</p>
+        </div>
+
+        <div id="userInfo" class="user-info" style="display: none;">
+            <strong id="userName"></strong> (<span id="userRole"></span>) - <span id="userTeam"></span>
+        </div>
+
+        <div id="loginSection" class="login-section">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Sign In to Your Account</h2>
+            
+            <div id="loginAlert" style="display: none;"></div>
+            
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" value="admin@company.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" value="admin123" required>
+                </div>
+                
+                <button type="submit" class="btn">Sign In</button>
+            </form>
+
+            <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #e9ecef;">
+                <h4 style="margin-bottom: 15px; color: #666;">Test Accounts:</h4>
+                <div style="display: grid; gap: 10px; font-size: 0.9rem;">
+                    <button class="btn btn-secondary btn-sm" onclick="quickLogin('admin@company.com', 'admin123')">Admin User</button>
+                    <button class="btn btn-secondary btn-sm" onclick="quickLogin('john@company.com', 'user123')">John Smith (Engineering)</button>
+                    <button class="btn btn-secondary btn-sm" onclick="quickLogin('jane@company.com', 'user123')">Jane Doe (Marketing)</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mainContent" class="main-content">
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+                <button class="nav-tab" id="adminTab" onclick="showTab('admin')" style="display: none;">⚙️ Admin</button>
+                <button class="nav-tab" onclick="showTab('alerts')">🔔 My Alerts</button>
+                <button class="nav-tab" onclick="showTab('profile')">👤 Profile</button>
+                <button class="nav-tab" onclick="logout()" style="margin-left: auto;">🚪 Logout</button>
+            </div>
+
+            <div class="tab-content">
+                <div id="dashboardTab" class="tab-pane active">
+                    <h2 style="margin-bottom: 30px;">System Overview</h2>
+                    <div id="analyticsLoading" class="loading">
+                        <div class="spinner"></div>
+                        Loading analytics...
+                    </div>
+                    <div id="analyticsContent" style="display: none;">
+                        <div class="stats-grid" id="statsGrid">
+                            </div>
+                        <h3 style="margin-top: 40px; margin-bottom: 20px;">Top 10 Alerts by Delivery</h3>
+                        <div id="topAlertsList">
+                            </div>
+                    </div>
+                </div>
+
+                <div id="adminTabPane" class="tab-pane">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                        <h2>Alert Management</h2>
+                        <button class="btn" id="createAlertBtn">➕ Create New Alert</button>
+                    </div>
+
+                    <div id="alertFormSection" class="login-section" style="display: none; max-width: none;">
+                        <h3 style="text-align: center; margin-bottom: 20px;">Create a New Alert</h3>
+                        <div id="alertFormAlert" style="display: none;"></div>
+                        <form id="alertForm" class="login-form">
+                            <div class="form-group">
+                                <label for="alertTitle">Title</label>
+                                <input type="text" id="alertTitle" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="alertMessage">Message</label>
+                                <textarea id="alertMessage" rows="4" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="alertSeverity">Severity</label>
+                                <select id="alertSeverity">
+                                    <option value="info">Info</option>
+                                    <option value="warning">Warning</option>
+                                    <option value="critical">Critical</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="alertVisibilityType">Visibility</label>
+                                <select id="alertVisibilityType">
+                                    <option value="organization">Entire Organization</option>
+                                    <option value="team">Specific Team</option>
+                                    <option value="user">Specific User</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="visibilityTargetGroup" style="display: none;">
+                                <label for="visibilityTarget">Visibility Target</label>
+                                <input type="text" id="visibilityTarget" placeholder="Enter Team ID or User ID">
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button type="submit" class="btn">Submit Alert</button>
+                                <button type="button" class="btn btn-secondary" onclick="hideAlertForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="allAlertsList">
+                        </div>
+                </div>
+
+                <div id="alertsTab" class="tab-pane">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2>My Alerts</h2>
+                        <div style="font-size: 0.9rem; color: #666;">
+                            <span id="unreadCount"></span> unread
+                        </div>
+                    </div>
+                    
+                    <div id="myAlertsLoading" class="loading">
+                        <div class="spinner"></div>
+                        Loading your alerts...
+                    </div>
+                    <div id="myAlertsGrid" class="alerts-grid">
+                        </div>
+                </div>
+                
+                <div id="profileTab" class="tab-pane">
+                    <h2>Your Profile</h2>
+                    <div id="profileDetails" style="margin-top: 20px;">
+                        </div>
+                    <button class="btn btn-secondary" style="margin-top: 30px;" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_URL = '/api';
+        let currentUser = null;
+        let token = localStorage.getItem('token');
+        let teams = [];
+
+        // --- Helper Functions ---
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-pane').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + 'Tab' + (tabId === 'admin' ? 'Pane' : '')).classList.add('active');
+            document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('active');
+
+            if (tabId === 'dashboard') fetchAnalytics();
+            if (tabId === 'alerts') fetchMyAlerts();
+            if (tabId === 'profile') fetchProfile();
+            if (tabId === 'admin') {
+                hideAlertForm();
+                fetchAllAlerts();
+                fetchTeams();
+            }
+        }
+
+        function showAlert(message, type = 'error', target = 'loginAlert') {
+            const alertDiv = document.getElementById(target);
+            alertDiv.innerHTML = message;
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.display = 'block';
+        }
+        
+        function hideAlert(target = 'loginAlert') {
+            document.getElementById(target).style.display = 'none';
+        }
+
+        async function apiFetch(endpoint, options = {}) {
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                ...options,
+                headers
+            });
+            
+            if (response.status === 401 && endpoint !== '/auth/login') {
+                logout();
+                throw new Error('Unauthorized');
+            }
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Something went wrong');
+            }
+
+            return response.json();
+        }
+
+        // --- Authentication ---
+
+        async function login(email, password) {
+            try {
+                const data = await apiFetch('/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ email, password })
+                });
+                token = data.token;
+                localStorage.setItem('token', token);
+                await initializeApp();
+            } catch (error) {
+                showAlert(error.message);
+            }
+        }
+
+        function logout() {
+            token = null;
+            localStorage.removeItem('token');
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('adminTab').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'none';
+            hideAlert('loginAlert');
+        }
+
+        function quickLogin(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+            login(email, password);
+        }
+
+        async function initializeApp() {
+            try {
+                const profile = await apiFetch('/auth/profile');
+                currentUser = profile;
+
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('userInfo').style.display = 'block';
+
+                document.getElementById('userName').textContent = currentUser.name;
+                document.getElementById('userRole').textContent = currentUser.role;
+                
+                if (currentUser.team) {
+                    document.getElementById('userTeam').textContent = `Team: ${currentUser.team.name}`;
+                } else {
+                    document.getElementById('userTeam').textContent = 'No Team';
+                }
+
+                if (currentUser.role === 'admin') {
+                    document.getElementById('adminTab').style.display = 'block';
+                } else {
+                    document.getElementById('adminTab').style.display = 'none';
+                }
+
+                showTab('dashboard');
+            } catch (error) {
+                console.error('Initialization failed:', error);
+                logout();
+            }
+        }
+
+        // --- Tab Content Functions ---
+
+        async function fetchProfile() {
+            const profileDetails = document.getElementById('profileDetails');
+            profileDetails.innerHTML = `<p><strong>Name:</strong> ${currentUser.name}</p>
+                                        <p><strong>Email:</strong> ${currentUser.email}</p>
+                                        <p><strong>Role:</strong> ${currentUser.role}</p>
+                                        <p><strong>Team:</strong> ${currentUser.team ? currentUser.team.name : 'None'}</p>`;
+        }
+        
+        async function fetchAnalytics() {
+            document.getElementById('analyticsLoading').style.display = 'block';
+            document.getElementById('analyticsContent').style.display = 'none';
+            try {
+                const data = await apiFetch('/admin/analytics');
+                renderAnalytics(data);
+            } catch (error) {
+                showAlert('Failed to load analytics.', 'error', 'analyticsContent');
+            } finally {
+                document.getElementById('analyticsLoading').style.display = 'none';
+                document.getElementById('analyticsContent').style.display = 'block';
+            }
+        }
+
+        function renderAnalytics(data) {
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${data.totalAlerts}</div>
+                    <div class="stat-label">Total Alerts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${data.totalDeliveries}</div>
+                    <div class="stat-label">Total Deliveries</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${data.readRate}%</div>
+                    <div class="stat-label">Read Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${data.snoozeRate}%</div>
+                    <div class="stat-label">Snooze Rate</div>
+                </div>
+            `;
+
+            const topAlertsList = document.getElementById('topAlertsList');
+            topAlertsList.innerHTML = data.topAlerts.map(alert => `
+                <div style="border-bottom: 1px solid #e9ecef; padding: 15px 0;">
+                    <div style="font-weight: 600;">${alert.title}</div>
+                    <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">
+                        ${alert.deliveryCount} deliveries, ${alert.readCount} reads
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function fetchMyAlerts() {
+            document.getElementById('myAlertsLoading').style.display = 'block';
+            document.getElementById('myAlertsGrid').innerHTML = '';
+            try {
+                const alerts = await apiFetch('/user/alerts');
+                renderUserAlerts(alerts);
+            } catch (error) {
+                showAlert('Failed to load your alerts.', 'error', 'alertsTab');
+            } finally {
+                document.getElementById('myAlertsLoading').style.display = 'none';
+            }
+        }
+
+        function renderUserAlerts(alerts) {
+            const myAlertsGrid = document.getElementById('myAlertsGrid');
+            const unreadCount = alerts.filter(a => !a.isRead).length;
+            document.getElementById('unreadCount').textContent = unreadCount;
+            
+            if (alerts.length === 0) {
+                myAlertsGrid.innerHTML = '<p style="text-align: center; color: #666;">You have no active alerts.</p>';
+                return;
+            }
+
+            myAlertsGrid.innerHTML = alerts.map(alert => `
+                <div class="alert-card ${alert.severity}">
+                    <div class="alert-header">
+                        <div style="flex: 1;">
+                            <div class="alert-title">${alert.title}</div>
+                            <span class="severity-badge severity-${alert.severity}">${alert.severity}</span>
+                        </div>
+                        <div style="text-align: right; font-size: 0.8rem; color: #999;">
+                            ${alert.isRead ? '✅ Read' : '🔴 Unread'}
+                            ${alert.snoozedUntil ? `<br>😴 Snoozed until ${new Date(alert.snoozedUntil).toLocaleString()}` : ''}
+                        </div>
+                    </div>
+                    <div class="alert-meta">
+                        ${alert.visibilityType} alert from ${new Date(alert.createdAt).toLocaleDateString()}
+                    </div>
+                    <div class="alert-message">${alert.message}</div>
+                    <div class="alert-actions">
+                        <button class="btn btn-sm btn-outline" onclick="markAsRead('${alert.id}')">Mark as Read</button>
+                        <button class="btn btn-sm btn-secondary" onclick="snoozeAlert('${alert.id}')">Snooze</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function markAsRead(alertId) {
+            try {
+                await apiFetch(`/user/alerts/${alertId}/read`, { method: 'POST' });
+                await fetchMyAlerts();
+            } catch (error) {
+                showAlert('Failed to mark alert as read.', 'error', 'alertsTab');
+            }
+        }
+
+        async function snoozeAlert(alertId) {
+            try {
+                await apiFetch(`/user/alerts/${alertId}/snooze`, { method: 'POST' });
+                await fetchMyAlerts();
+            } catch (error) {
+                showAlert('Failed to snooze alert.', 'error', 'alertsTab');
+            }
+        }
+        
+        async function fetchTeams() {
+            try {
+                const response = await apiFetch('/teams'); // Assuming a teams endpoint exists for admin
+                teams = response.teams;
+            } catch (error) {
+                console.error("Failed to fetch teams:", error);
+            }
+        }
+
+        async function fetchAllAlerts() {
+            document.getElementById('allAlertsList').innerHTML = '<div class="loading"><div class="spinner"></div>Loading alerts...</div>';
+            try {
+                const alerts = await apiFetch('/admin/alerts');
+                renderAllAlerts(alerts);
+            } catch (error) {
+                showAlert('Failed to load alerts.', 'error', 'adminTabPane');
+            }
+        }
+
+        function renderAllAlerts(alerts) {
+            const allAlertsList = document.getElementById('allAlertsList');
+            if (alerts.length === 0) {
+                allAlertsList.innerHTML = '<p style="text-align: center; color: #666;">No alerts found.</p>';
+                return;
+            }
+            allAlertsList.innerHTML = alerts.map(alert => `
+                <div class="alert-card ${alert.severity}" style="margin-bottom: 20px;">
+                    <div class="alert-header">
+                        <div style="flex: 1;">
+                            <div class="alert-title">${alert.title}</div>
+                            <span class="severity-badge severity-${alert.severity}">${alert.severity}</span>
+                        </div>
+                        <div style="text-align: right; font-size: 0.8rem; color: #999;">
+                            ID: ${alert.id}
+                            <br>Created: ${new Date(alert.createdAt).toLocaleDateString()}
+                            ${alert.archivedAt ? `<br>Archived: ${new Date(alert.archivedAt).toLocaleDateString()}` : ''}
+                        </div>
+                    </div>
+                    <div class="alert-meta">
+                        Visibility: ${alert.visibilityType} ${alert.visibilityTarget ? `(${alert.visibilityTarget})` : ''}
+                        <br>Expires: ${alert.expiryTime ? new Date(alert.expiryTime).toLocaleDateString() : 'Never'}
+                    </div>
+                    <div class="alert-message">${alert.message}</div>
+                    <div class="alert-actions">
+                        <button class="btn btn-sm btn-secondary" onclick="triggerDelivery('${alert.id}')">Trigger Delivery</button>
+                        <button class="btn btn-sm btn-outline" onclick="archiveAlert('${alert.id}')">Archive</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showCreateAlertForm() {
+            document.getElementById('alertFormSection').style.display = 'block';
+            document.getElementById('createAlertBtn').style.display = 'none';
+        }
+
+        function hideAlertForm() {
+            document.getElementById('alertFormSection').style.display = 'none';
+            document.getElementById('createAlertBtn').style.display = 'block';
+            hideAlert('alertFormAlert');
+        }
+
+        async function createAlert(event) {
+            event.preventDefault();
+            const title = document.getElementById('alertTitle').value;
+            const message = document.getElementById('alertMessage').value;
+            const severity = document.getElementById('alertSeverity').value;
+            const visibilityType = document.getElementById('alertVisibilityType').value;
+            const visibilityTarget = document.getElementById('visibilityTarget').value || null;
+
+            const payload = { title, message, severity, visibilityType, visibilityTarget };
+
+            try {
+                await apiFetch('/admin/alerts', {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                showAlert('Alert created successfully!', 'success', 'alertFormAlert');
+                document.getElementById('alertForm').reset();
+                fetchAllAlerts();
+            } catch (error) {
+                showAlert('Failed to create alert: ' + error.message, 'error', 'alertFormAlert');
+            }
+        }
+
+        async function triggerDelivery(alertId) {
+            try {
+                await apiFetch(`/admin/alerts/${alertId}/deliver`, { method: 'POST' });
+                showAlert('Manual delivery triggered!', 'success', 'adminTabPane');
+            } catch (error) {
+                showAlert('Failed to trigger delivery: ' + error.message, 'error', 'adminTabPane');
+            }
+        }
+        
+        async function archiveAlert(alertId) {
+            if (!confirm('Are you sure you want to archive this alert?')) return;
+            try {
+                await apiFetch(`/admin/alerts/${alertId}`, { method: 'DELETE' });
+                showAlert('Alert archived successfully!', 'success', 'adminTabPane');
+                fetchAllAlerts();
+            } catch (error) {
+                showAlert('Failed to archive alert: ' + error.message, 'error', 'adminTabPane');
+            }
+        }
+
+        // --- Event Listeners ---
+        
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = e.target.email.value;
+            const password = e.target.password.value;
+            login(email, password);
+        });
+
+        document.getElementById('createAlertBtn').addEventListener('click', showCreateAlertForm);
+
+        document.getElementById('alertForm').addEventListener('submit', createAlert);
+
+        document.getElementById('alertVisibilityType').addEventListener('change', (e) => {
+            const visibilityTargetGroup = document.getElementById('visibilityTargetGroup');
+            if (e.target.value === 'team' || e.target.value === 'user') {
+                visibilityTargetGroup.style.display = 'flex';
+            } else {
+                visibilityTargetGroup.style.display = 'none';
+            }
+        });
+
+        // --- Initialization ---
+        
+        if (token) {
+            initializeApp();
+        }
+    </script>
+</body>
+</html>
