@@ -13,9 +13,11 @@ class DatabaseConnection {
     const dbPath = process.env.DATABASE_URL?.replace('sqlite:', '') || 
                    join(__dirname, '../../database/notifications.db');
     
+    console.log('📁 Database path:', dbPath);
+    
     this.db = new sqlite3.Database(dbPath, (error) => {
       if (error) {
-        console.error('Database connection failed:', error);
+        console.error('❌ Database connection failed:', error);
       } else {
         console.log('✅ Connected to SQLite database');
         this.configurePragmas();

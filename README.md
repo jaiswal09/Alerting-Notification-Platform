@@ -116,7 +116,7 @@ POST   /api/scheduler/trigger     # Manual reminder trigger
 2. Run `npm install` to install dependencies
 3. Run `npm run setup:db` to initialize the database
 4. Run `npm run dev` to start the development server
-5. Visit `http://localhost:3000` to access the platform
+5. Visit `http://localhost:3001` to access the platform
 
 ### Test Accounts
 - **Admin**: admin@company.com / admin123
@@ -187,7 +187,7 @@ NotificationChannelFactory.register('email', EmailNotificationChannel);
 
 ### Common Issues
 - **Database Connection**: Ensure SQLite file permissions are correct
-- **Port Conflicts**: Change PORT in .env if 3000 is occupied
+- **Port Conflicts**: Change PORT in .env if 3001 is occupied
 - **Dependencies**: Run `npm ci` for clean dependency installation
 
 ### Development Tips

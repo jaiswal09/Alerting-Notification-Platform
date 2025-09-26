@@ -70,19 +70,16 @@ class Server {
   }
 
   private setupRoutes(): void {
-    // Serve static files from public directory
-    this.app.use(express.static(join(__dirname, '../public')));
-
     // API routes
     this.app.use('/api', apiRoutes);
 
-    // Serve the main application for all non-API routes
-    this.app.get('*', (req, res) => {
-      if (req.path.startsWith('/api/')) {
-        res.status(404).json({ error: 'API endpoint not found' });
-        return;
-      }
-      res.sendFile(join(__dirname, '../public/index.html'));
+    // Health check for backend
+    this.app.get('/health', (req, res) => {
+      res.json({ 
+        status: 'Backend is running',
+        timestamp: new Date().toISOString(),
+        port: process.env.PORT || 3001
+      });
     });
   }
 
@@ -108,13 +105,13 @@ class Server {
   }
 
   public start(): void {
-    const port = parseInt(process.env.PORT || '3000');
+    const port = parseInt(process.env.PORT || '3001');
 
     this.app.listen(port, () => {
       console.log('🚀 Alerting & Notification Platform Started');
       console.log('=========================================');
       console.log(`🌐 Server: http://localhost:${port}`);
-      console.log(`📊 Dashboard: http://localhost:${port}`);
+      console.log(`📊 Frontend: http://localhost:5173`);
       console.log(`📚 API Docs: http://localhost:${port}/api/docs`);
       console.log(`💚 Health Check: http://localhost:${port}/api/health`);
       console.log('');
